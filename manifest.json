@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Following List",
+    "version": "1.0",
+  
+    "description": "Display the following list of other's twitch channels.",
+  
+    "icons": {
+    },
+    "content_scripts": [
+      {
+        "matches": ["*://*.twitch.tv/*"],
+        "js": ["twitch.js"]
+      }
+    ],
+    "permissions":[
+      "https://api.twitch.tv/*"
+    ]
+}
