@@ -140,6 +140,15 @@ document.body.addEventListener('click', (e) => {
     }, 5000)
 })
 
+window.addEventListener('click', (e) => {
+    const followingLI = document.getElementById('following-li-item')
+    const followDiv = document.getElementById('followDiv')
+    if(followingLI.contains(e.target) || followDiv.contains(e.target))
+        console.log(true)
+    else
+        console.log(false)
+})
+
 if(!document.getElementById('following-li-item')){
     createNewFollowItem()
 }
