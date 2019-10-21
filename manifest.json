@@ -10,7 +10,13 @@
     "content_scripts": [
       {
         "matches": ["*://*.twitch.tv/*"],
-        "js": ["twitch.js"]
+        "js": [
+          "twitch.js",
+          "twitchAPI.js"
+        ],
+        "css":[
+          "styles.css"
+        ]
       }
     ],
     "permissions":[

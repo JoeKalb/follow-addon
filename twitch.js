@@ -1,3 +1,4 @@
+let foundFollowers = false
 let createNewFollowItem = () => {
     const topDiv = document.createElement('div')
     topDiv.className = 'tw-align-center tw-flex tw-flex-column tw-full-height'
@@ -21,7 +22,6 @@ let createNewFollowItem = () => {
     document.getElementsByClassName('tw-align-items-center tw-flex tw-flex-grow-1 tw-flex-wrap tw-font-size-4 tw-full-height tw-justify-content-center')[0]
         .appendChild(newLi)
     
-    let foundFollowers = false
     newLi.addEventListener('click', async () => {
         const followDiv = document.getElementById('followDiv')
         if(followDiv.style.display === "none"){
@@ -38,13 +38,22 @@ let createNewFollowItem = () => {
                 const followingUL = document.getElementById('follow-ul')
                 for(let i = 0; i < channelFollowing.total; ++i){
                     const newLI = document.createElement('li')
-                    newLI.innerText = channelFollowing.following[i].to_name
+                    newLI.dataset.name = channelFollowing.following[i].to_name
+                    newLI.dataset.id = channelFollowing.following[i].to_id
+                    newLI.dataset.date = channelFollowing.following[i].followed_at
+                    //newLI.innerText = channelFollowing.following[i].to_name
+
+                    const a = document.createElement('a')
+                    a.innerText = channelFollowing.following[i].to_name
+                    a.href = `https://www.twitch.tv/${channelFollowing.following[i].to_name}`
+                    a.target = '_blank'
+
+                    newLI.appendChild(a)
                     followingUL.appendChild(newLI)
                 }
                 foundFollowers = true
             }
             
-            const followDiv = document.getElementById('followDiv')
             followDiv.style.display = ""
         }
         else{
@@ -53,69 +62,26 @@ let createNewFollowItem = () => {
     })
 }
 
-let getChannelInfo = async(channelName) => {
-    try{
-        let res = await fetch(`https://api.twitch.tv/helix/users?login=${channelName}`,{
-            headers:{
-                "Client-ID":"o099v47qn5evhck790hfx1ch78ln12"
-            }
-        })
-        let json = await res.json()
-        return json.data[0]
-    }
-    catch(err){
-        console.log(err)
-        return 0
-    }
-}
+let channelName = window.location.pathname.match(/[a-z]+/mg)[0]
+document.body.addEventListener('click', (e) => {
 
-let getChannelFollowing = async(channelID) => {
-    try{
-        let res = await fetch(`https://api.twitch.tv/helix/users/follows?from_id=${channelID}&first=100`, {
-            headers:{
-                "Client-ID":"o099v47qn5evhck790hfx1ch78ln12"
-            }
-        })
-        let json = await res.json()
-
-        const { total } = json
-        let following = [...json.data]
-        while(json.data.length !== 0){
-            try{
-                const { cursor } = json.pagination
-                res = await fetch(`https://api.twitch.tv/helix/users/follows?from_id=${channelID}&first=100&after=${cursor}`, {
-                    headers:{
-                        "Client-ID":"o099v47qn5evhck790hfx1ch78ln12"
-                    }
-                })
-                json = await res.json()
+    const followDiv = document.getElementById('followDiv')
+    const followingBtn = document.getElementById('following-li-item')
+    /* if(followDiv.style.display === "" 
+        && (!followDiv.contains(e.target)) || !followingBtn.contains(e.target)){
+        followDiv.style.display = "none"
+        rething logic for this area
+    } */
     
-                following = [...following, ...json.data]
-            }
-            catch(err){
-                json.data = []
-                console.log(err)
-            }
-        }
-
-        return {
-            total,
-            following
-        }
-    }
-    catch(err){
-        console.log(err)
-        return 0
-    }
-}
-
-let currentURL = window.location.href
-document.body.addEventListener('click', () => {
     setTimeout(() => {
-        if(currentURL !== window.location.href){
-            currentURL = window.location.href
-            createNewFollowItem()
-            foundFollowers = false;
+        let currentChannel = window.location.pathname.match(/[a-z]+/mg)[0]
+        if(channelName !== currentChannel){
+            currentURL = currentChannel
+            foundFollowers = false
+
+            if(document.getElementsByClassName('tw-align-items-center tw-flex tw-flex-grow-1 tw-flex-wrap tw-font-size-4 tw-full-height tw-justify-content-center')[0].childElementCount === 5)
+                createNewFollowItem()
+            
             while(ul.firstChild){
                 ul.removeChild(ul.firstChild)
             }
@@ -127,73 +93,42 @@ if(document.getElementsByClassName('tw-align-items-center tw-flex tw-flex-grow-1
     createNewFollowItem()
 }
 
-fetch(browser.runtime.getURL("html/following.html"))
-    .then(data => data.text())
-    .then(html => {
-        console.log(html)
-        /* document.getElementsByClassName('tw-align-items-center tw-flex tw-flex-grow-1 tw-flex-wrap tw-font-size-4 tw-full-height tw-justify-content-center')[0]
-            .appendChild(html) */
-        document.body.appendChild(html)
-
-        const closeBtn = document.getElementById('closeBtn')
-        closeBtn.addEventListener('click',() => {
-            document.getElementById('followDiv').style.display = 'none'
-        })
-})
-
-const followDiv = document.createElement('div')
-followDiv.id = 'followDiv'
-followDiv.style.display = 'none'
-followDiv.style.position = 'absolute'
-followDiv.style.backgroundColor = 'black'
-followDiv.style.width = '339px'
-followDiv.style.height = '500px'
-followDiv.style.zIndex = '10'
-followDiv.style.top = '51px'
-followDiv.style.right = '0px'
-followDiv.style.borderStyle = "solid"
-followDiv.style.borderColor = 'Silver'
-followDiv.style.borderTopWidth = '1px'
-followDiv.style.borderRightWidth = '1px'
-followDiv.style.borderBottomWidth = '1px'
-followDiv.style.borderRadius = '3px'
-followDiv.style.paddingTop = "1px"
-followDiv.style.paddingLeft = "1px"
-//followDiv.style.overflow = 'auto'
-
-const headerDiv = document.createElement('div')
-headerDiv.style.display = 'flex'
-
-const newP = document.createElement('p')
-newP.innerText = "Following"
-newP.style.verticalAlign = "bottom"
-newP.style.paddingTop = "18px"
-newP.style.paddingLeft = "100px"
-
-const closeBtn = document.createElement('button')
-closeBtn.id = 'closeBtn'
-closeBtn.innerText = 'X'
-closeBtn.className = 'tw-align-items-center tw-align-middle tw-border-bottom-left-radius-medium tw-border-bottom-right-radius-medium tw-border-top-left-radius-medium tw-border-top-right-radius-medium tw-button-icon tw-core-button tw-core-button--border tw-inline-flex tw-interactive tw-justify-content-center tw-overflow-hidden tw-relative'
-closeBtn.style.position = "absolute"
-closeBtn.style.marginLeft = '10px'
-closeBtn.style.marginTop = '10px'
-closeBtn.addEventListener('click', () => {
+let createFollowingDiv = () => {
+    const followDiv = document.createElement('div')
+    followDiv.id = 'followDiv'
     followDiv.style.display = 'none'
-})
-
-followDiv.appendChild(headerDiv)
-headerDiv.appendChild(closeBtn)
-headerDiv.appendChild(newP)
-document.body.appendChild(followDiv)
-
-const ul = document.createElement('ul')
-ul.id = 'follow-ul'
-//ul.style.overflow = 'auto'
-ul.style.paddingLeft = '5px'
-const ulDiv = document.createElement('div')
-ulDiv.style.height = "90%"
-ulDiv.style.overflow = 'auto'
-ulDiv.style.scrollBehavior = 'inherit'
-
-ulDiv.appendChild(ul)
-followDiv.appendChild(ulDiv)
+    
+    const headerDiv = document.createElement('div')
+    headerDiv.style.display = 'flex'
+    
+    const newP = document.createElement('p')
+    newP.innerText = "Following"
+    newP.style.verticalAlign = "bottom"
+    newP.style.paddingTop = "18px"
+    newP.style.paddingLeft = "100px"
+    
+    const closeBtn = document.createElement('button')
+    closeBtn.id = 'closeBtn'
+    closeBtn.innerText = 'X'
+    closeBtn.className = 'tw-align-items-center tw-align-middle tw-border-bottom-left-radius-medium tw-border-bottom-right-radius-medium tw-border-top-left-radius-medium tw-border-top-right-radius-medium tw-button-icon tw-core-button tw-core-button--border tw-inline-flex tw-interactive tw-justify-content-center tw-overflow-hidden tw-relative'
+    closeBtn.style.position = "absolute"
+    closeBtn.style.marginLeft = '10px'
+    closeBtn.style.marginTop = '10px'
+    closeBtn.addEventListener('click', () => {
+        followDiv.style.display = 'none'
+    })
+    
+    followDiv.appendChild(headerDiv)
+    headerDiv.appendChild(closeBtn)
+    headerDiv.appendChild(newP)
+    document.body.appendChild(followDiv)
+    
+    const ul = document.createElement('ul')
+    ul.id = 'follow-ul'
+    const ulDiv = document.createElement('div')
+    ulDiv.className = 'scroll'
+    
+    ulDiv.appendChild(ul)
+    followDiv.appendChild(ulDiv)    
+}
+createFollowingDiv()

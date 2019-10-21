@@ -1,0 +1,27 @@
+.scroll{
+    height: 93%;
+    overflow: auto;
+    scroll-behavior: inherit;
+    scrollbar-color: #423D3D black;
+    scrollbar-width: thin;
+}
+
+#followDiv{
+    position: absolute;
+    background-color: black;
+    width: 339px;
+    height: 80vh;
+    z-index: 10;
+    top: 51px;
+    right: 0px;
+    border-style: solid;
+    border-color: #6D687B;
+    border-width: 1px;
+    border-radius: 3px;
+    padding-top: 1px;
+    padding-left: 1px;
+}
+
+#follow-ul{
+    padding-left: 20px;
+}
