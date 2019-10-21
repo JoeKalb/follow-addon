@@ -27,6 +27,15 @@ let createNewFollowItem = () => {
         if(followDiv.style.display === "none"){
             const pathArr = window.location.pathname.match(/[a-z]+/mg)
             const channel = pathArr[0]
+
+            if(channel !== channelName){
+                foundFollowers = false
+                const ul = document.getElementById('follow-ul')
+                while(ul.firstChild){
+                    ul.removeChild(ul.firstChild)
+                }
+                channelName = channel
+            }
         
             if(!foundFollowers){
                 let userInfo = await getChannelInfo(channel)
@@ -38,19 +47,23 @@ let createNewFollowItem = () => {
                 const followingUL = document.getElementById('follow-ul')
                 for(let i = 0; i < channelFollowing.total; ++i){
                     const newLI = document.createElement('li')
+                    newLI.className = 'following-li'
                     newLI.dataset.name = channelFollowing.following[i].to_name
                     newLI.dataset.id = channelFollowing.following[i].to_id
                     newLI.dataset.date = channelFollowing.following[i].followed_at
-                    //newLI.innerText = channelFollowing.following[i].to_name
 
                     const a = document.createElement('a')
                     a.innerText = channelFollowing.following[i].to_name
                     a.href = `https://www.twitch.tv/${channelFollowing.following[i].to_name}`
                     a.target = '_blank'
+                    a.className = 'following-li-a'
 
                     newLI.appendChild(a)
                     followingUL.appendChild(newLI)
                 }
+                const followingHeader = document.getElementById('following-header')
+                followingHeader.innerText = `Following ${channelFollowing.total}`
+
                 foundFollowers = true
             }
             
@@ -60,37 +73,6 @@ let createNewFollowItem = () => {
             followDiv.style.display = "none"
         }
     })
-}
-
-let channelName = window.location.pathname.match(/[a-z]+/mg)[0]
-document.body.addEventListener('click', (e) => {
-
-    const followDiv = document.getElementById('followDiv')
-    const followingBtn = document.getElementById('following-li-item')
-    /* if(followDiv.style.display === "" 
-        && (!followDiv.contains(e.target)) || !followingBtn.contains(e.target)){
-        followDiv.style.display = "none"
-        rething logic for this area
-    } */
-    
-    setTimeout(() => {
-        let currentChannel = window.location.pathname.match(/[a-z]+/mg)[0]
-        if(channelName !== currentChannel){
-            currentURL = currentChannel
-            foundFollowers = false
-
-            if(document.getElementsByClassName('tw-align-items-center tw-flex tw-flex-grow-1 tw-flex-wrap tw-font-size-4 tw-full-height tw-justify-content-center')[0].childElementCount === 5)
-                createNewFollowItem()
-            
-            while(ul.firstChild){
-                ul.removeChild(ul.firstChild)
-            }
-        }
-    }, 5000)
-})
-
-if(document.getElementsByClassName('tw-align-items-center tw-flex tw-flex-grow-1 tw-flex-wrap tw-font-size-4 tw-full-height tw-justify-content-center')[0].childElementCount === 5){
-    createNewFollowItem()
 }
 
 let createFollowingDiv = () => {
@@ -106,6 +88,7 @@ let createFollowingDiv = () => {
     newP.style.verticalAlign = "bottom"
     newP.style.paddingTop = "18px"
     newP.style.paddingLeft = "100px"
+    newP.id = 'following-header'
     
     const closeBtn = document.createElement('button')
     closeBtn.id = 'closeBtn'
@@ -132,3 +115,31 @@ let createFollowingDiv = () => {
     followDiv.appendChild(ulDiv)    
 }
 createFollowingDiv()
+
+let channelName = window.location.pathname.match(/[a-z]+/mg)[0]
+document.body.addEventListener('click', (e) => {
+
+    if(!document.getElementById('following-li-item')){
+        createNewFollowItem()
+    }
+
+    const ul = document.getElementById('follow-ul')
+    setTimeout(() => {
+        let currentChannel = window.location.pathname.match(/[a-z]+/mg)[0]
+        if(channelName !== currentChannel){
+            currentURL = currentChannel
+            foundFollowers = false
+
+            if(!document.getElementById('following-li-item'))
+                createNewFollowItem()
+            
+            while(ul.firstChild){
+                ul.removeChild(ul.firstChild)
+            }
+        }
+    }, 5000)
+})
+
+if(!document.getElementById('following-li-item')){
+    createNewFollowItem()
+}
