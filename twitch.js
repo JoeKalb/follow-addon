@@ -114,6 +114,15 @@ let createFollowingDiv = () => {
     ulDiv.appendChild(ul)
     followDiv.appendChild(ulDiv)    
 }
+
+let isFollowingExt = (e) => {
+    const followingLI = document.getElementById('following-li-item')
+    const followDiv = document.getElementById('followDiv')
+    const closeFollowBtn = document.getElementById('closeBtn')
+
+    return (followingLI.contains(e.target) || followDiv.contains(e.target)) 
+    && !closeFollowBtn.contains(e.target)
+}
 createFollowingDiv()
 
 let channelName = window.location.pathname.match(/[a-z]+/mg)[0]
@@ -141,12 +150,10 @@ document.body.addEventListener('click', (e) => {
 })
 
 window.addEventListener('click', (e) => {
-    const followingLI = document.getElementById('following-li-item')
     const followDiv = document.getElementById('followDiv')
-    if(followingLI.contains(e.target) || followDiv.contains(e.target))
-        console.log(true)
-    else
-        console.log(false)
+    if(!isFollowingExt(e) && followDiv.style.display === ''){
+        followDiv.style.display = 'none'
+    }
 })
 
 if(!document.getElementById('following-li-item')){
