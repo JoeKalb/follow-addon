@@ -6,8 +6,13 @@
     scrollbar-width: thin;
 }
 
-.following-li-a{
+.following-li-p{
     color:white;
+    cursor: pointer;
+}
+
+.following-li-p:hover{
+    color:#BF94FF;
 }
 
 #followDiv{
@@ -27,5 +32,5 @@
 }
 
 #follow-ul{
-    padding-left: 20px;
+    padding-left: 10px;
 }

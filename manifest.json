@@ -12,7 +12,8 @@
         "matches": ["*://*.twitch.tv/*"],
         "js": [
           "twitch.js",
-          "twitchAPI.js"
+          "twitchAPI.js",
+          "main.js"
         ],
         "css":[
           "styles.css"

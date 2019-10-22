@@ -1,4 +1,3 @@
-let foundFollowers = false
 let createNewFollowItem = () => {
     const topDiv = document.createElement('div')
     topDiv.className = 'tw-align-center tw-flex tw-flex-column tw-full-height'
@@ -52,13 +51,16 @@ let createNewFollowItem = () => {
                     newLI.dataset.id = channelFollowing.following[i].to_id
                     newLI.dataset.date = channelFollowing.following[i].followed_at
 
-                    const a = document.createElement('a')
-                    a.innerText = channelFollowing.following[i].to_name
-                    a.href = `https://www.twitch.tv/${channelFollowing.following[i].to_name}`
-                    a.target = '_blank'
-                    a.className = 'following-li-a'
+                    const p = document.createElement('span')
+                    p.innerText = channelFollowing.following[i].to_name
+                    //p.href = `https://www.twitch.tv/${channelFollowing.following[i].to_name}`
+                    //p.target = '_blank'
+                    p.className = 'following-li-p'
+                    p.addEventListener('click', () => singleFollowingDiv(
+                        channelFollowing.following[i].to_name
+                    ))
 
-                    newLI.appendChild(a)
+                    newLI.appendChild(p)
                     followingUL.appendChild(newLI)
                 }
                 const followingHeader = document.getElementById('following-header')
@@ -73,6 +75,11 @@ let createNewFollowItem = () => {
             followDiv.style.display = "none"
         }
     })
+}
+
+let singleFollowingDiv = async (name) => {
+    let res = await getChannelInfo(name)
+    console.log(res)
 }
 
 let createFollowingDiv = () => {
@@ -122,40 +129,4 @@ let isFollowingExt = (e) => {
 
     return (followingLI.contains(e.target) || followDiv.contains(e.target)) 
     && !closeFollowBtn.contains(e.target)
-}
-createFollowingDiv()
-
-let channelName = window.location.pathname.match(/[a-z]+/mg)[0]
-document.body.addEventListener('click', (e) => {
-
-    if(!document.getElementById('following-li-item')){
-        createNewFollowItem()
-    }
-
-    const ul = document.getElementById('follow-ul')
-    setTimeout(() => {
-        let currentChannel = window.location.pathname.match(/[a-z]+/mg)[0]
-        if(channelName !== currentChannel){
-            currentURL = currentChannel
-            foundFollowers = false
-
-            if(!document.getElementById('following-li-item'))
-                createNewFollowItem()
-            
-            while(ul.firstChild){
-                ul.removeChild(ul.firstChild)
-            }
-        }
-    }, 5000)
-})
-
-window.addEventListener('click', (e) => {
-    const followDiv = document.getElementById('followDiv')
-    if(!isFollowingExt(e) && followDiv.style.display === ''){
-        followDiv.style.display = 'none'
-    }
-})
-
-if(!document.getElementById('following-li-item')){
-    createNewFollowItem()
 }
