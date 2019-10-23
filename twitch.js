@@ -80,6 +80,27 @@ let createNewFollowItem = () => {
 let singleFollowingDiv = async (name) => {
     let res = await getChannelInfo(name)
     console.log(res)
+    if(res !== 0){
+        const singleFollowDiv = document.getElementById('singleFollowDiv')
+        const singleFollowATag = document.getElementById('singleFollowATag')
+        const singleFollowImg = document.getElementById('singleFollowImg')
+
+        singleFollowDiv.style.backgroundImage = `url(${res.offline_image_url})`
+        singleFollowImg.style.opacity = .85
+
+        singleFollowATag.href = `https://www.twitch.tv/${res.login}`
+        singleFollowATag.innerText = res.display_name
+
+        singleFollowImg.src = res.profile_image_url
+        singleFollowImg.title = res.display_name
+        singleFollowImg.style.height = '100px'
+        singleFollowImg.style.width = '100px'
+
+        let followCount = await getChannelFollowerCount(res.id)
+        if(followCount !== 0){
+            singleFollowATag.title = `Followers: ${followCount}`
+        }
+    }
 }
 
 let createFollowingDiv = () => {
@@ -94,7 +115,7 @@ let createFollowingDiv = () => {
     newP.innerText = "Following"
     newP.style.verticalAlign = "bottom"
     newP.style.paddingTop = "18px"
-    newP.style.paddingLeft = "100px"
+    newP.style.paddingLeft = "90px"
     newP.id = 'following-header'
     
     const closeBtn = document.createElement('button')
@@ -117,7 +138,18 @@ let createFollowingDiv = () => {
     ul.id = 'follow-ul'
     const ulDiv = document.createElement('div')
     ulDiv.className = 'scroll'
+
+    const singleFollowDiv = document.createElement('div')
+    singleFollowDiv.id = 'singleFollowDiv'
+    const img = document.createElement('img')
+    img.id = 'singleFollowImg'
+    const a = document.createElement('a')
+    a.id = 'singleFollowATag'
+    a.target = '_blank'
+    singleFollowDiv.appendChild(img)
+    singleFollowDiv.appendChild(a)
     
+    ulDiv.appendChild(singleFollowDiv)
     ulDiv.appendChild(ul)
     followDiv.appendChild(ulDiv)    
 }

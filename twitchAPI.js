@@ -1,8 +1,10 @@
+const CLIENT_ID = "o099v47qn5evhck790hfx1ch78ln12"
+
 let getChannelInfo = async(channelName) => {
     try{
         let res = await fetch(`https://api.twitch.tv/helix/users?login=${channelName}`,{
             headers:{
-                "Client-ID":"o099v47qn5evhck790hfx1ch78ln12"
+                "Client-ID":CLIENT_ID
             }
         })
         let json = await res.json()
@@ -18,7 +20,7 @@ let getChannelFollowing = async(channelID) => {
     try{
         let res = await fetch(`https://api.twitch.tv/helix/users/follows?from_id=${channelID}&first=100`, {
             headers:{
-                "Client-ID":"o099v47qn5evhck790hfx1ch78ln12"
+                "Client-ID":CLIENT_ID
             }
         })
         let json = await res.json()
@@ -30,7 +32,7 @@ let getChannelFollowing = async(channelID) => {
                 const { cursor } = json.pagination
                 res = await fetch(`https://api.twitch.tv/helix/users/follows?from_id=${channelID}&first=100&after=${cursor}`, {
                     headers:{
-                        "Client-ID":"o099v47qn5evhck790hfx1ch78ln12"
+                        "Client-ID":CLIENT_ID
                     }
                 })
                 json = await res.json()
@@ -47,6 +49,23 @@ let getChannelFollowing = async(channelID) => {
             total,
             following
         }
+    }
+    catch(err){
+        console.log(err)
+        return 0
+    }
+}
+
+let getChannelFollowerCount = async(channelID) => {
+    try{
+        let res = await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${channelID}`, {
+            headers:{
+                "Client-ID":CLIENT_ID
+            }
+        })
+        let json = await res.json()
+
+        return json.total
     }
     catch(err){
         console.log(err)
