@@ -86,7 +86,6 @@ let singleFollowingDiv = async (name) => {
         const singleFollowImg = document.getElementById('singleFollowImg')
 
         singleFollowDiv.style.backgroundImage = `url(${res.offline_image_url})`
-        singleFollowImg.style.opacity = .85
 
         singleFollowATag.href = `https://www.twitch.tv/${res.login}`
         singleFollowATag.innerText = res.display_name
@@ -100,6 +99,12 @@ let singleFollowingDiv = async (name) => {
         if(followCount !== 0){
             singleFollowATag.title = `Followers: ${followCount}`
         }
+
+        let isStreaming = await getStreamsByID(res.id)
+        console.log(isStreaming)
+
+        let topClips = await getClipsByID(res.id)
+        console.log(topClips)
     }
 }
 

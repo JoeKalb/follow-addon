@@ -72,3 +72,71 @@ let getChannelFollowerCount = async(channelID) => {
         return 0
     }
 }
+
+let getStreamsByID = async(channelID) => {
+    try{
+        let res = await fetch(`https://api.twitch.tv/helix/streams?user_id=${channelID}`, {
+            headers:{
+                "Client-ID":CLIENT_ID
+            }
+        })
+        let json = await res.json()
+
+        return json.data[0]
+    }
+    catch(err){
+        console.log(err)
+        return 0
+    }
+}
+
+let getVODSByID = async(channelID) => {
+    try{
+        let res = await fetch(`https://api.twitch.tv/helix/videos?user_id=${channelID}`, {
+            headers:{
+                "Client-ID":CLIENT_ID
+            }
+        })
+        let json = await res.json()
+
+        return json.data
+    }
+    catch(err){
+        console.log(err)
+        return 0
+    }
+}
+
+let getClipsByID = async(channelID) => {
+    try{
+        let res = await fetch(`https://api.twitch.tv/helix/clips?broadcaster_id=${channelID}&first=3`, {
+            headers:{
+                "Client-ID":CLIENT_ID
+            }
+        })
+        let json = await res.json()
+
+        return json.data
+    }
+    catch(err){
+        console.log(err)
+        return 0
+    }
+}
+
+let getGamesByID = async(gameIDArr) => {
+    try{
+        let res = await fetch(`https://api.twitch.tv/helix/clips?id=${gameIDArr.join('&id=')}`, {
+            headers:{
+                "Client-ID":CLIENT_ID
+            }
+        })
+        let json = await res.json()
+
+        return json.data
+    }
+    catch(err){
+        console.log(err)
+        return 0
+    }
+}
