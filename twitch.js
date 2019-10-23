@@ -64,7 +64,7 @@ let createNewFollowItem = () => {
                     followingUL.appendChild(newLI)
                 }
                 const followingHeader = document.getElementById('following-header')
-                followingHeader.innerText = `Following ${channelFollowing.total}`
+                followingHeader.innerText = `FOLLOWING: ${channelFollowing.total}`
 
                 foundFollowers = true
             }
@@ -82,13 +82,19 @@ let singleFollowingDiv = async (name) => {
     console.log(res)
     if(res !== 0){
         const singleFollowDiv = document.getElementById('singleFollowDiv')
+        //singleFollowDiv.style.display = ''
         const singleFollowATag = document.getElementById('singleFollowATag')
         const singleFollowImg = document.getElementById('singleFollowImg')
+        const singleFollowDescription = document.getElementById('singleFollowDescription')
+        const singleFollowers = document.getElementById('singleFollowers')
 
         singleFollowDiv.style.backgroundImage = `url(${res.offline_image_url})`
 
         singleFollowATag.href = `https://www.twitch.tv/${res.login}`
         singleFollowATag.innerText = res.display_name
+        singleFollowATag.description = `https://www.twitch.tv/${res.login}`
+        
+        singleFollowDescription.innerText = res.description
 
         singleFollowImg.src = res.profile_image_url
         singleFollowImg.title = res.display_name
@@ -97,7 +103,7 @@ let singleFollowingDiv = async (name) => {
 
         let followCount = await getChannelFollowerCount(res.id)
         if(followCount !== 0){
-            singleFollowATag.title = `Followers: ${followCount}`
+            singleFollowers.innerText = `Followers: ${followCount}`
         }
 
         let isStreaming = await getStreamsByID(res.id)
@@ -117,10 +123,8 @@ let createFollowingDiv = () => {
     headerDiv.style.display = 'flex'
     
     const newP = document.createElement('p')
-    newP.innerText = "Following"
+    newP.innerText = "FOLLOWING"
     newP.style.verticalAlign = "bottom"
-    newP.style.paddingTop = "18px"
-    newP.style.paddingLeft = "90px"
     newP.id = 'following-header'
     
     const closeBtn = document.createElement('button')
@@ -146,13 +150,28 @@ let createFollowingDiv = () => {
 
     const singleFollowDiv = document.createElement('div')
     singleFollowDiv.id = 'singleFollowDiv'
+
+    const singleInfoDiv = document.createElement('div')
+    singleInfoDiv.id = 'singleInfoDiv'
+    singleInfoDiv.className = 'purpleBack'
+
     const img = document.createElement('img')
     img.id = 'singleFollowImg'
+
+    const textInfoDiv = document.createElement('div')
+    textInfoDiv.id = 'textInfoDiv'
     const a = document.createElement('a')
     a.id = 'singleFollowATag'
     a.target = '_blank'
-    singleFollowDiv.appendChild(img)
-    singleFollowDiv.appendChild(a)
+    const followers = document.createElement('p')
+    followers.id = 'singleFollowers'
+    const des = document.createElement('p')
+    des.id = 'singleFollowDescription'
+    textInfoDiv.append(a, followers, des)
+
+    singleInfoDiv.appendChild(img)
+    singleInfoDiv.appendChild(textInfoDiv)
+    singleFollowDiv.appendChild(singleInfoDiv)
     
     ulDiv.appendChild(singleFollowDiv)
     ulDiv.appendChild(ul)
