@@ -68,7 +68,7 @@
     display: flex;
     flex-direction: column;
     width:100%;
-    height: 105px;
+    height: 108px;
     overflow: auto;
     /* scroll-behavior: inherit; */
     scrollbar-color: #423D3D rgba(0, 0, 0, 0.26);
