@@ -118,6 +118,7 @@ let createFollowingDiv = () => {
     const followDiv = document.createElement('div')
     followDiv.id = 'followDiv'
     followDiv.style.display = 'none'
+    followDiv.draggable = true
     
     const headerDiv = document.createElement('div')
     headerDiv.style.display = 'flex'
